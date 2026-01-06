@@ -1,3 +1,4 @@
+````instructions
 ---
 name: copilot-instructions
 description: Core workspace instructions for Copilot interactions with the Soc Ops bingo game project
@@ -12,48 +13,36 @@ description: Core workspace instructions for Copilot interactions with the Soc O
 
 ## Overview
 
-**Soc Ops** is a React 19 + TypeScript bingo game for mixers. Players mark squares matching questions to get 5 in a row to win.
+React 19 + TypeScript bingo game for in-person mixers. Players mark squares to get 5 in a row. 
 
-**Tech Stack**: Vite 7, Tailwind CSS v4, Vitest, ESLint, GitHub Pages deployment
+**Stack**: Vite 7, Tailwind v4, Vitest, ESLint flat config
 
-### Structure
-```
-src/components/       # UI components
-src/hooks/           # useBingoGame - state management
-src/types/           # Domain types (BingoSquareData, GameState)
-src/utils/           # bingoLogic.ts - win detection (tested)
-src/data/            # questions.ts - question bank
-```
+**Structure**: `components/` UI | `hooks/useBingoGame` state + localStorage | `utils/bingoLogic` pure logic + tests | `data/questions` 24 questions (center is free)
 
-## Key Patterns
+**Data Flow**: `useBingoGame` hook → props/callbacks (no Context). State = `{gameState, board, winningLine, winningSquareIds, showBingoModal}`. Actions = `startGame()`, `handleSquareClick(id)`, `resetGame()`, `dismissModal()`.
 
-**Game Logic**: 5x5 board with free center. Win = 5 marked squares in a row (horizontal, vertical, diagonal).
+**Game Logic**: 5×5 board, center (index 12) free. Win = 5 marked in row/col/diagonal. `checkBingo()` returns `BingoLine{type, index, squares}`.
 
-**Architecture**: 
-- Components receive props & callbacks (no Context)
-- `useBingoGame` hook orchestrates state
-- `bingoLogic.ts` handles pure logic (unit tested)
+## Patterns
 
-**Adding Features**: Write tests first → implement → wire via hooks/props → run checklist
+**Add Features**: Types in `types/` → tests in `*.test.ts` → logic in `utils/` → wire via `useBingoGame` → update components → run checklist
 
-**Styling**: Use `@theme` in `src/index.css` for tokens. Leverage v4 features: `color-mix()`, opacity (`bg-black/50`), CSS variables for theming. See frontend-design.instructions.md to avoid generic AI aesthetics.
+**Styling**: Theme tokens in `src/index.css` via `@theme`. Use Tailwind v4 (`color-mix()`, `bg-black/50`). Follow [frontend-design.instructions.md](.github/instructions/frontend-design.instructions.md) to avoid generic AI aesthetics. See [tailwind-4.instructions.md](.github/instructions/tailwind-4.instructions.md).
+
+**Testing**: Vitest + Testing Library + jest-dom. See `utils/bingoLogic.test.ts` for examples.
 
 ## Commands
-- `npm install` — Install dependencies
-- `npm run dev` — Start dev server
+- `npm run dev` — Vite dev server
 - `npm run build` — Production build
-- `npm run lint` — Lint code (add `--fix` to auto-fix)
+- `npm run lint` — ESLint (add `--fix`)
 - `npm run test` — Run tests
 
+**Deployment**: Push to `main` → GitHub Actions → `https://{user}.github.io/{repo}`
+
 ## Key Files
-- [src/hooks/useBingoGame.ts](src/hooks/useBingoGame.ts) — State & orchestration
-- [src/utils/bingoLogic.ts](src/utils/bingoLogic.ts) — Win detection logic
-- [src/types/index.ts](src/types/index.ts) — Type definitions
-- [src/data/questions.ts](src/data/questions.ts) — Questions
-- [src/index.css](src/index.css) — Tailwind & tokens
+- [src/hooks/useBingoGame.ts](src/hooks/useBingoGame.ts) — State orchestration
+- [src/utils/bingoLogic.ts](src/utils/bingoLogic.ts) — `generateBoard()`, `checkBingo()`, `getWinningSquareIds()`
+- [src/types/index.ts](src/types/index.ts) — Types
+- [src/data/questions.ts](src/data/questions.ts) — Questions (need 24)
 
-## References
-- [frontend-design.instructions.md](.github/instructions/frontend-design.instructions.md) — Design patterns
-- [tailwind-4.instructions.md](.github/instructions/tailwind-4.instructions.md) — Tailwind v4 guide
-
-**Deployment**: Push to `main` → auto-deploys to `https://{username}.github.io/soc-ops` via GitHub Actions
+````
